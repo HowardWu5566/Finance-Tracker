@@ -15,5 +15,8 @@ app.add_url_rule('/cash', 'cash_form', cash_form, methods=['GET', 'POST'])
 app.add_url_rule('/cash-delete', 'cash_delete', cash_delete, methods=['POST'])
 app.add_url_rule('/stock', 'stock_form', stock_form, methods=['GET', 'POST'])
 
+app.register_error_handler(404, handle_404)
+app.register_error_handler(500, handle_500)
+
 if __name__ == "__main__":
     app.run(debug=app.config['DEBUG'])
