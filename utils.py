@@ -1,7 +1,9 @@
 import requests
 import math
+import matplotlib
 import matplotlib.pyplot as plt
 from config import Config
+matplotlib.use('agg')
 
 def get_currency_rate():
     try:

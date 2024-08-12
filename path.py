@@ -45,8 +45,12 @@ def home():
 
 def cash_form():
     if request.method == 'POST':
-        tw_dollars = request.form.get('tw-dollars', '0')
-        us_dollars = request.form.get('us-dollars', '0')
+        tw_dollars = 0
+        us_dollars = 0
+        if request.values['tw-dollars'] != '':
+            tw_dollars = request.values['tw-dollars']
+        if request.values['us-dollars'] != '':
+            us_dollars = request.values['us-dollars']
         note = request.form.get('note', '')
         date = request.form.get('date')
 
