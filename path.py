@@ -7,8 +7,8 @@ import os
 def home():
     cash_result = execute_query("SELECT * FROM cash")
 
-    tw_dollars = sum(data[1] for data in cash_result)
-    us_dollars = sum(data[2] for data in cash_result)
+    tw_dollars = sum(float(data[1]) if data[1] and data[1] != '' else 0 for data in cash_result)
+    us_dollars = sum(float(data[2]) if data[2] and data[2] != '' else 0 for data in cash_result)
 
     exchange_rate = get_currency_rate()
     if exchange_rate is None:
@@ -26,9 +26,7 @@ def home():
         create_pie_chart([s['stock_id'] for s in stock_info], [s['total_value'] for s in stock_info], "piechart.jpg")
     
     if us_dollars or tw_dollars or total_stock_value:
-        create_pie_chart(['USD', 'TWD', 'Stock'], 
-                         [us_dollars * exchange_rate, tw_dollars, total_stock_value], 
-                         "piechart2.jpg")
+        create_pie_chart(['USD', 'TWD', 'Stock'], [us_dollars * exchange_rate, tw_dollars, total_stock_value], "piechart2.jpg")
 
 
     data = {
@@ -47,10 +45,16 @@ def home():
 
 def cash_form():
     if request.method == 'POST':
-        tw_dollars = request.form.get('tw-dollars', 0)
-        us_dollars = request.form.get('us-dollars', 0)
+        tw_dollars = request.form.get('tw-dollars', '0')
+        us_dollars = request.form.get('us-dollars', '0')
         note = request.form.get('note', '')
         date = request.form.get('date')
+
+        try:
+            tw_dollars = int(tw_dollars)
+            us_dollars = float(us_dollars)
+        except ValueError:
+            return handle_500('error.html', message="資料格式錯誤")
 
         execute_query(
             "INSERT INTO cash (taiwanese_dollars, us_dollars, note, date_info) VALUES (?, ?, ?, ?)",
